@@ -263,7 +263,7 @@ def graph_tsne(best_k):
     n = 0
     # Se inicia el subplot de acuerdo al numero de algoritmos analizados
     fig, ax = plt.subplots(int(numAlgorithm), 3, figsize=(20, 40), sharex=True, sharey=True)
-    plt.subplots_adjust(hspace=0.01)
+    plt.subplots_adjust(hspace=0.1)
 
     for a in selected_algorithms:
         cluster_result = pd.read_csv(f'Result_csv/{a}_result.csv')
