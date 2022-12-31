@@ -4,6 +4,7 @@ import os
 from openpyxl import Workbook
 import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
+import random
 
 import seaborn as sns
 from sklearn.cluster import AffinityPropagation
@@ -34,6 +35,7 @@ def read_algorithm(numAlgorithm, numClusters):
     # Se obtiene los resultados de la carpeta de todos los algoritmos para luego poder seleccionarlos
     list_files = os.listdir('Result_csv')
     list_files = np.array(list_files)
+    list_files.sort()
 
     selected_algorithms = list()
     for x in range(int(numAlgorithm)):
@@ -82,6 +84,7 @@ def separated_cluster_per_id():
             num = num + 1
     return algorithms_analyze_cluster
 
+
 # Funcion que analiza todos los grupos de cada cluster para encontrar la interseccion
 def filter_cluster_per_group(algorithms_analyze_cluster, Kn):
     print(
@@ -105,6 +108,7 @@ def filter_cluster_per_group(algorithms_analyze_cluster, Kn):
             print(df_initial_analyze)
             result_per_cluster_analized(count, df_filtered, df_initial_analyze, Kn, name_filtered, i)
         count = count + 1
+
 
 # muesta el resultado de la interseccion de cada algoritmo analizado con cada grupo de cluster
 def result_per_cluster_analized(count, df_cluster, df_initial_analyze, Kn, name_filtered, file_name):
@@ -136,7 +140,8 @@ def result_per_cluster_analized(count, df_cluster, df_initial_analyze, Kn, name_
 
     pd_data = pd.DataFrame.from_dict(df_final_analyze, orient='index')
     pd_data = pd_data.transpose()
-    pd_data.to_excel(f'Result_Intersection/Result_{file_name}.xlsx')
+    # pd_data.to_excel(f'Result_Intersection/Result_{file_name}.xlsx')
+
 
 # Funcion que completa la matriz del K analizado, para poder usarla en un futuro
 def complete_matrix(df_original, df_transpose, Kn):
@@ -165,6 +170,7 @@ def complete_matrix(df_original, df_transpose, Kn):
         df_complete_matrix.loc[index_matrix[i]] = df_transpose.iloc[i].to_numpy()
 
     return df_complete_matrix
+
 
 # funcion que analiza los resltados de la matriz completa
 def matrix_max_average(Kn, average):
@@ -215,6 +221,7 @@ def matrix_max_average(Kn, average):
 
     return df_temp_row
 
+
 # Funcion que cuenta los resultados de la matriz mayores al value (average) ingresado
 def set_filter_by_average(max_average, value):
     _dic_values = dict()
@@ -230,6 +237,7 @@ def set_filter_by_average(max_average, value):
                 _dic_values[i].append(count)
     return _dic_values
 
+
 # Funcion que realiza la suma de cada matriz analizada de cada grupo de cluster
 def average_per_column(df_a):
     df_a['Average Freq'] = df_a.sum(axis=1)
@@ -240,6 +248,7 @@ def average_per_column(df_a):
 
 def avergae_per_Kn_algorithm(df_m, Kn):
     Kn_average_algo[f'K{Kn}'] = df_m['Average Freq'] / Kn
+
 
 # Funcion que controla los resultados de los graficos
 def graph_tsne(best_k):
@@ -264,21 +273,24 @@ def graph_tsne(best_k):
     plt.savefig(f'IMG/Graph_Result.png')
     plt.show()
 
+
 # Funcion para grafica los cluster k, K-1, K+1
 def plot_tsne_2d(k: int, cluster_result, a, n, tsne_result, ax, fig):
     fig.suptitle("Graficos TSNE", fontsize=20)
-    ax[0, 0].set_title(f'k={k-1}', fontsize=18)
+    ax[0, 0].set_title(f'k={k - 1}', fontsize=18)
     ax[0, 1].set_title(f'k={k}', fontsize=18)
-    ax[0, 2].set_title(f'k={k+1}', fontsize=18)
+    ax[0, 2].set_title(f'k={k + 1}', fontsize=18)
 
     ax[n, 0].set_ylabel(f'{a}', fontsize=16)
-    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k - 1}'], ax[n, 0], a, k-1)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k-1}'], ax[n, 0], a, k - 1)
     plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k}'], ax[n, 1], a, k)
-    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k}'], ax[n, 2], a, k=k+1)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k+1}'], ax[n, 2], a, k=k + 1)
+
 
 # Funcion para graficar los scatter (Tsne) de cada grafico
 def plot_tsne_for_model_2d(tsne_result: np.array, y_pred, ax: plt.Axes, name, k: any):
     n = 0
+
     for i, c in enumerate(np.unique(y_pred)):
         # Condicion para quitar grupos de cluster no analizados
         if i > (k-1):
@@ -298,12 +310,14 @@ def plot_tsne_for_model_2d(tsne_result: np.array, y_pred, ax: plt.Axes, name, k:
 
     ax.legend(loc="lower right")
 
+
 # funcion que anade los valores correspondientes a la matriz
 def add_values_to_dataframe(_df_dict):
     _df_matrix = pd.DataFrame(columns=index_matrix, index=index_matrix)
     for k, v in _df_dict.items():
         _df_matrix[k] = v
     return _df_matrix
+
 
 # Funcion switch que retorna la marca del grupo del cluster a mostrar
 def switch_pltmarker(_m):
@@ -317,6 +331,7 @@ def switch_pltmarker(_m):
         return '*'
     else:
         return '+'
+
 
 # Funcion switch que devuelve una lista de colores dependiendo del grupo a mostrar
 def switch_pltcolor(lst):
@@ -333,6 +348,7 @@ def switch_pltcolor(lst):
         else:
             cols.append('purple')
     return cols
+
 
 # funcion switch para poder completa la matrix dependiendo del cluster que se encuentre
 def switch_matrix(num, Kn):
@@ -354,6 +370,7 @@ def switch_matrix(num, Kn):
         return Kn * 8
     else:
         return Kn
+
 
 # funcion switch que realiza el analisis de los cluster por grupos, para poder analizar el grupo correspondiente y no repetir
 def switch(num, Kn):
@@ -420,7 +437,7 @@ if __name__ == '__main__':
     # # Se crea diccionario de todos los resultados de los clusters para Gaussian Mixture
     # gaussian_mixture = dict()
     # for k in range(2, 13):
-    #     gaus_mix = GaussianMixture(n_components=k, n_init=10, max_iter=100).fit(X)
+    #     gaus_mix = GaussianMixture(n_components=k, n_init=10, max_iter=100).fit(original_values)
     #     gaussian_mixture[f'K{k}'] = gaus_mix.predict(original_values)
     # # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
     # write_to_csv(gaussian_mixture, 'GaussianMixture_result')
@@ -451,48 +468,48 @@ if __name__ == '__main__':
     # birch = dict()
     # for i in range(2, 13, 1):
     #     model = Birch(branching_factor=50, n_clusters=i, threshold=0.5)
-    #     model.fit(data_X)
-    #     birch[f'K{i}'] = model.predict(data_X)
+    #     model.fit(normalized_values)
+    #     birch[f'K{i}'] = model.predict(normalized_values)
     # write_to_csv(birch, 'BIRCH_result')
-
+    #
     # print('\033[32m*************** DBSCAN Clustering ***************\033[039m\n')
     # dbscan = dict()
     # for k in range(2, 13):
-    #     clusters = DBSCAN(eps=0.6, min_samples=k).fit(data_X)
+    #     clusters = DBSCAN(eps=0.6, min_samples=k).fit(normalized_values)
     #     dbscan[f'K{k}'] = clusters.labels_
     # write_to_csv(dbscan, 'DBSCAN_result')
     #
     # print('\033[32m*************** OPTICS Clustering ***************\033[039m\n')
     # optics = dict()
     # for k in range(2, 13):
-    #     clustering = OPTICS(min_cluster_size=k, ).fit(data_X)
+    #     clustering = OPTICS(min_cluster_size=k, ).fit(normalized_values)
     #     optics[f'K{k}'] = clustering.labels_
     # write_to_csv(optics, 'OPTICS_result')
-
+    #
     # print('\033[32m***************  Spectral Clustering ***************\033[039m\n')
     # spectral = dict()
     # for k in range(2, 13):
-    #     clustering = SpectralClustering(n_clusters=k, assign_labels='discretize', random_state=0).fit(data_X)
+    #     clustering = SpectralClustering(n_clusters=k, assign_labels='discretize', random_state=0).fit(normalized_values)
     #     spectral[f'K{k}'] = clustering.labels_
     # write_to_csv(spectral, 'Spectral_result')
     # print('\033[32m***************  MiniBatchKMeans Clustering ***************\033[039m\n')
     # mini_Barch_means = dict()
     # for k in range(2, 13):
     #     kmeans = MiniBatchKMeans(n_clusters=k)
-    #     kmeans.fit(data_X)
+    #     kmeans.fit(normalized_values)
     #     mini_Barch_means[f'K{k}'] = kmeans.labels_
     # write_to_csv(mini_Barch_means, 'MiniBatchKMeans_result')
     # print('\033[32m***************  Agglomerative Hierarchical Clustering Clustering ***************\033[039m\n')
     # agglomerative_hierarchical_clustering = dict()
     # for k in range(2, 13):
     #     cluster_ea = AgglomerativeClustering(n_clusters=k, linkage='ward', affinity='euclidean')
-    #     predict = cluster_ea.fit_predict(data_X)
+    #     predict = cluster_ea.fit_predict(normalized_values)
     #     agglomerative_hierarchical_clustering[f'K{k}'] = predict
     # write_to_csv(agglomerative_hierarchical_clustering, 'AgglomerativeClustering_result')
     # print('\033[32m***************   KMeans ***************\033[039m\n')
     # kmeans = dict()
     # for k in range(2, 13):
-    #     cluster = KMeans(n_clusters=k).fit(data_X)
+    #     cluster = KMeans(n_clusters=k).fit(normalized_values)
     #     kmeans[f'K{k}'] = cluster.labels_
     # write_to_csv(kmeans, 'KMeans_result')
     #
@@ -501,7 +518,7 @@ if __name__ == '__main__':
     # alpha = 0.1
     # numRepPoints = 5
     # for k in range(2, 13):
-    #     cluster = runCURE(data_X, numRepPoints, alpha, k)
+    #     cluster = runCURE(normalized_values, numRepPoints, alpha, k)
     #     cure[f'K{k}'] = cluster
     # write_to_csv(cure, 'CURE_result')
     #
@@ -520,7 +537,7 @@ if __name__ == '__main__':
     # Se consulta cuantos cluster se desea analizar
     numClusters = input("Cuantos clusters desea analizar? => ")
     # variable para poder analizar los porcentajes, se usa para escoger porcentages mayores al numero escogido en %
-    average = 50
+    average = 60
     # Se lee los algoritmos para poder analizarlos dependiendo de los datos ingresados anteriormente
     algorithms_analyze, selected_clusters, selected_algorithms = read_algorithm(numAlgorithm, numClusters)
     # Se hace llamado a la funcion separated_cluster_per_id() par poder tener los resultados de los cluster separados
