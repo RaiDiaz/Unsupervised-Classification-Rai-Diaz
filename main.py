@@ -36,7 +36,7 @@ def read_algorithm(numAlgorithm, numClusters):
     list_files = os.listdir('Result_csv')
     list_files = np.array(list_files)
     list_files.sort()
-
+    # gh
     selected_algorithms = list()
     for x in range(int(numAlgorithm)):
         selected_algorithms.append(list_files[x].split('_')[0])  # Se agrega a la lista los algoritmos ha analizar
