@@ -24,26 +24,28 @@ Algoritmos:
 | -------| ------------- |
 |   1    | Affinity Propagation  |
 |   2    | Agglomerative Hierarchical Clustering  |
-|3  |  BIRCH |
-|4  |  DBSCAN |
-|5  | Gaussian Mixture Models |
-|6  | Mean Shift Clustering |
-|7  | Mini-Batch K-Means |
-|8  | OPTICS |
-|9  | Spectral-clustering |
-|10 | Expectation-Maximization |
-|11 | k-means |
-|12 | CURE |
+|   3    |  BIRCH |
+|   4    |  DBSCAN |
+|   5    | Gaussian Mixture Models |
+|   6    | Mean Shift Clustering |
+|   7    | Mini-Batch K-Means |
+|   8    | OPTICS |
+|   9    | Spectral-clustering |
+|   10   | Expectation-Maximization |
+|   11   | k-means |
+|   12   | CURE |
 *******************************************************************************
 Cluster:
-1 -> k = 2
-2 -> k = 3
-3 -> k = 4
-4 -> k = 5
-5 -> k = 6
-6 -> k = 7
-7 -> k = 8
-8 -> k = 9
-9 -> k = 10
-10 -> k = 11
-11 -> k = 12
+| Input  | Output |
+| -------| ------------- |
+|   1    | k=2 |
+|   2    | k=3 |
+|   3    | k=4 |
+|   4    | k=5 |
+|   5    | k=6 |
+|   6    | k=7 |
+|   7    | k=8 |
+|   8    | k=9 |
+|   9    | k=10 |
+|   10   | k=11 |
+|   11   | k=12 |
