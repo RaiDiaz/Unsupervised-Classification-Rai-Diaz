@@ -49,3 +49,6 @@ Cluster:
 |   9    | k=10 |
 |   10   | k=11 |
 |   11   | k=12 |
+
+
+Por otro lado, al momento de descargar el código. Se debe configurar e instalar las librerias. Para esto se creo un archivo requirements.txt, en este archivo genera el interpreter para poder correr el programa sin ningun problema.
