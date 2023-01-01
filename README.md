@@ -20,8 +20,12 @@ NOTA: El paso 1 y 2 pueden ser opcionales, ya que si se realiza el analisis con 
 
 NOTA:
 Algoritmos:
-1 -> Affinity Propagation
-2 -> Agglomerative Hierarchical Clustering
+| First Header  | Second Header |
+| ------------- | ------------- |
+| 1  | Affinity Propagation  |
+| 2  | Agglomerative Hierarchical Clustering  |
+
+2 -> 
 3 -> BIRCH
 4 -> DBSCAN
 5 -> Gaussian Mixture Models
