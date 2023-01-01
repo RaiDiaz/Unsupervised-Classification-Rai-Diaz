@@ -20,22 +20,20 @@ NOTA: El paso 1 y 2 pueden ser opcionales, ya que si se realiza el analisis con 
 
 NOTA:
 Algoritmos:
-| First Header  | Second Header |
-| ------------- | ------------- |
-| 1  | Affinity Propagation  |
-| 2  | Agglomerative Hierarchical Clustering  |
-
-2 -> 
-3 -> BIRCH
-4 -> DBSCAN
-5 -> Gaussian Mixture Models
-6 -> Mean Shift Clustering
-7 -> Mini-Batch K-Means
-8 -> OPTICS
-9 -> Spectral-clustering
-10 -> Expectation-Maximization
-11 -> k-means
-12 -> CURE
+| Input  | Output |
+| -------| ------------- |
+|   1    | Affinity Propagation  |
+|   2    | Agglomerative Hierarchical Clustering  |
+|3  |  BIRCH |
+|4  |  DBSCAN |
+|5  | Gaussian Mixture Models |
+|6  | Mean Shift Clustering |
+|7  | Mini-Batch K-Means |
+|8  | OPTICS |
+|9  | Spectral-clustering |
+|10 | Expectation-Maximization |
+|11 | k-means |
+|12 | CURE |
 *******************************************************************************
 Cluster:
 1 -> k = 2
