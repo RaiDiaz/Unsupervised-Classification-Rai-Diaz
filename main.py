@@ -23,7 +23,6 @@ from CURE import *
 # Funcion para guardar resultados en archivo csv o xlsx
 def write_to_csv(data, name):
     pd_data = pd.DataFrame.from_dict(data)
-
     pd_data.to_csv(f'Result_csv/{name}.csv')
     pd_data.to_excel(f'Result_xlx/{name}.xlsx')
 
@@ -36,7 +35,7 @@ def read_algorithm(numAlgorithm, numClusters):
     list_files = os.listdir('Result_csv')
     list_files = np.array(list_files)
     list_files.sort()
-    # gh
+
     selected_algorithms = list()
     for x in range(int(numAlgorithm)):
         selected_algorithms.append(list_files[x].split('_')[0])  # Se agrega a la lista los algoritmos ha analizar
@@ -257,7 +256,7 @@ def graph_tsne(best_k):
     tsne_result = tsne.fit_transform(df_normalized)
     plt.title('T-SNE sin Clusterización')
     plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c='purple', marker='x', s=20)
-    plt.savefig(f'IMG/Graph_Original.png')
+    plt.savefig(f'Graph_Original.png')
     plt.show()
 
     n = 0
@@ -267,10 +266,13 @@ def graph_tsne(best_k):
 
     for a in selected_algorithms:
         cluster_result = pd.read_csv(f'Result_csv/{a}_result.csv')
-        plot_tsne_2d(best_k, cluster_result, a, n, tsne_result, ax, fig)
+        if best_k == 2:
+            plot_tsne_2d_2(best_k, cluster_result, a, n, tsne_result, ax, fig)
+        else:
+            plot_tsne_2d(best_k, cluster_result, a, n, tsne_result, ax, fig)
         n = n + 1
     # plt.tight_layout()
-    plt.savefig(f'IMG/Graph_Result.png')
+    plt.savefig(f'Graph_Result.png')
     plt.show()
 
 
@@ -282,9 +284,21 @@ def plot_tsne_2d(k: int, cluster_result, a, n, tsne_result, ax, fig):
     ax[0, 2].set_title(f'k={k + 1}', fontsize=18)
 
     ax[n, 0].set_ylabel(f'{a}', fontsize=16)
-    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k-1}'], ax[n, 0], a, k - 1)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k - 1}'], ax[n, 0], a, k - 1)
     plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k}'], ax[n, 1], a, k)
-    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k+1}'], ax[n, 2], a, k=k + 1)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k + 1}'], ax[n, 2], a, k=k + 1)
+
+
+def plot_tsne_2d_2(k: int, cluster_result, a, n, tsne_result, ax, fig):
+    fig.suptitle("Graficos TSNE", fontsize=20)
+    ax[0, 0].set_title(f'k={k}', fontsize=18)
+    ax[0, 1].set_title(f'k={k + 1}', fontsize=18)
+    ax[0, 2].set_title(f'k={k + 2}', fontsize=18)
+
+    ax[n, 0].set_ylabel(f'{a}', fontsize=16)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k}'], ax[n, 0], a, k)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k + 1}'], ax[n, 1], a, k + 1)
+    plot_tsne_for_model_2d(tsne_result, cluster_result[f'K{k + 2}'], ax[n, 2], a, k + 2)
 
 
 # Funcion para graficar los scatter (Tsne) de cada grafico
@@ -293,7 +307,7 @@ def plot_tsne_for_model_2d(tsne_result: np.array, y_pred, ax: plt.Axes, name, k:
 
     for i, c in enumerate(np.unique(y_pred)):
         # Condicion para quitar grupos de cluster no analizados
-        if i > (k-1):
+        if i > (k - 1):
             exit
         # Condicion que analiza DBSCAN y OPTICS ya que poseen resultados con ruido (noise)
         elif name == 'DBSCAN' or name == 'OPTICS':
@@ -372,7 +386,8 @@ def switch_matrix(num, Kn):
         return Kn
 
 
-# funcion switch que realiza el analisis de los cluster por grupos, para poder analizar el grupo correspondiente y no repetir
+# funcion switch que realiza el analisis de los cluster por grupos, para poder analizar el grupo correspondiente y no
+# repetir
 def switch(num, Kn):
     if (Kn - 1) < num < (Kn * 2):
         return Kn * 2
@@ -402,140 +417,158 @@ def switch(num, Kn):
 
 if __name__ == '__main__':
     # Path del archivo a leer, si se quiere analizar otro dataset, se debe cambiar la direccion
-    FILE_NAME_PATH = 'files/CSV_ETS295_class_smote_5_100.csv'
+    FILE_NAME_PATH = 'files/iris.csv'
     # Lectura del archivo csv.
     df_original = pd.read_csv(FILE_NAME_PATH)
-    # print('\033[32m****** Dataset sin normalizar ******\033[039m\n')
-    # print(df_original.to_string())
+    # df_original.drop('samples', inplace=True, axis=1)
+    # df_original.drop('type', inplace=True, axis=1)
+    print('\033[32m****** Dataset sin normalizar ******\033[039m\n')
+    # print(df_original)
     # Normalización de los datos.
-    # print('\033[32m****** Dataset normalizado ******\033[039m\n')
+    print('\033[32m****** Dataset normalizado ******\033[039m\n')
     df_normalized = (df_original - df_original.min()) / (df_original.max() - df_original.min())
-    # print(df_normalized.round(3).to_string())
+    # print(df_normalized.round(3))
     df_normalized.to_csv('files/dataset_normalized.csv')
 
     # Se extrae los valores del dataset original y del normalizado para poder realizar la clusterizacion
     original_values = df_original.values
     normalized_values = df_normalized.values
-    # print('\033[32m*************** Affinity Propagation ***************\033[039m\n')
-    # # Creación de un diccionario con las preferencias,
-    # results = {
-    #     'preferences': [-65, -45, -30, -12, -11, -10, -8.35, -8.25, -8, -7, -6.25]
-    # }
-    # # Se crea diccionario de todos los resultados de los clusters para Affinity propagation
-    # affinity_propagation = dict()
-    # k = 1;
-    # for p in results['preferences']:
-    #     clustering = AffinityPropagation(preference=p).fit(df_normalized)
-    #     clustering_centers_indices = clustering.cluster_centers_indices_
-    #     clustering_labels = clustering.labels_
-    #     affinity_propagation[f'K{k + 1}'] = clustering_labels
-    #     k += 1
-    # # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
-    # write_to_csv(affinity_propagation, 'AffinityPropagation_result')
-    #
-    # print('\033[32m*************** Gaussian Mixture ***************\033[039m\n')
-    # # Se crea diccionario de todos los resultados de los clusters para Gaussian Mixture
-    # gaussian_mixture = dict()
-    # for k in range(2, 13):
-    #     gaus_mix = GaussianMixture(n_components=k, n_init=10, max_iter=100).fit(original_values)
-    #     gaussian_mixture[f'K{k}'] = gaus_mix.predict(original_values)
-    # # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
-    # write_to_csv(gaussian_mixture, 'GaussianMixture_result')
-    #
-    # print('\033[32m*************** Mean Shift Clustering ***************\033[039m\n')
-    # precomputed_quantiles = {
-    #     2: 0.4142142142142142,
-    #     3: 0.4117117117117117,
-    #     4: 0.38143143143143143,
-    #     5: 0.34364364364364364,
-    #     6: 0.33338338338338336,
-    #     7: 0.32837837837837835,
-    #     8: 0.24254254254254254,
-    #     9: 0.23503503503503503,
-    #     10: 0.22502502503503502,
-    #     11: 0.20225225225225227,
-    #     12: 0.20225225225225227,
-    #     13: 0.2,
-    # }
-    # mean_shift = dict()
-    # for k, v in precomputed_quantiles.items():
-    #     bandwidth = estimate_bandwidth(df_normalized, quantile=v)
-    #     model = MeanShift(bandwidth=bandwidth).fit(df_normalized)
-    #     mean_shift[f'K{k}'] = model.predict(df_normalized)
-    # write_to_csv(mean_shift, 'MeanShift_result')
-    #
-    # print('\033[32m*************** BIRCH Clustering ***************\033[039m\n')
-    # birch = dict()
-    # for i in range(2, 13, 1):
-    #     model = Birch(branching_factor=50, n_clusters=i, threshold=0.5)
-    #     model.fit(normalized_values)
-    #     birch[f'K{i}'] = model.predict(normalized_values)
-    # write_to_csv(birch, 'BIRCH_result')
-    #
-    # print('\033[32m*************** DBSCAN Clustering ***************\033[039m\n')
-    # dbscan = dict()
-    # for k in range(2, 13):
-    #     clusters = DBSCAN(eps=0.6, min_samples=k).fit(normalized_values)
-    #     dbscan[f'K{k}'] = clusters.labels_
-    # write_to_csv(dbscan, 'DBSCAN_result')
-    #
-    # print('\033[32m*************** OPTICS Clustering ***************\033[039m\n')
-    # optics = dict()
-    # for k in range(2, 13):
-    #     clustering = OPTICS(min_cluster_size=k, ).fit(normalized_values)
-    #     optics[f'K{k}'] = clustering.labels_
-    # write_to_csv(optics, 'OPTICS_result')
-    #
-    # print('\033[32m***************  Spectral Clustering ***************\033[039m\n')
-    # spectral = dict()
-    # for k in range(2, 13):
-    #     clustering = SpectralClustering(n_clusters=k, assign_labels='discretize', random_state=0).fit(normalized_values)
-    #     spectral[f'K{k}'] = clustering.labels_
-    # write_to_csv(spectral, 'Spectral_result')
-    # print('\033[32m***************  MiniBatchKMeans Clustering ***************\033[039m\n')
-    # mini_Barch_means = dict()
-    # for k in range(2, 13):
-    #     kmeans = MiniBatchKMeans(n_clusters=k)
-    #     kmeans.fit(normalized_values)
-    #     mini_Barch_means[f'K{k}'] = kmeans.labels_
-    # write_to_csv(mini_Barch_means, 'MiniBatchKMeans_result')
-    # print('\033[32m***************  Agglomerative Hierarchical Clustering Clustering ***************\033[039m\n')
-    # agglomerative_hierarchical_clustering = dict()
-    # for k in range(2, 13):
-    #     cluster_ea = AgglomerativeClustering(n_clusters=k, linkage='ward', affinity='euclidean')
-    #     predict = cluster_ea.fit_predict(normalized_values)
-    #     agglomerative_hierarchical_clustering[f'K{k}'] = predict
-    # write_to_csv(agglomerative_hierarchical_clustering, 'AgglomerativeClustering_result')
-    # print('\033[32m***************   KMeans ***************\033[039m\n')
-    # kmeans = dict()
-    # for k in range(2, 13):
-    #     cluster = KMeans(n_clusters=k).fit(normalized_values)
-    #     kmeans[f'K{k}'] = cluster.labels_
-    # write_to_csv(kmeans, 'KMeans_result')
-    #
-    # print('\033[32m***************   CURE ***************\033[039m\n')
-    # cure = dict()
-    # alpha = 0.1
-    # numRepPoints = 5
-    # for k in range(2, 13):
-    #     cluster = runCURE(normalized_values, numRepPoints, alpha, k)
-    #     cure[f'K{k}'] = cluster
-    # write_to_csv(cure, 'CURE_result')
-    #
-    # print('\033[32m*************** Expectation-Maximation ***************\033[039m\n')
-    # # Se crea diccionario de todos los resultados de los clusters para Expectation-Maximation
-    # expectation_max = dict()
-    # for k in range(2, 13):
-    #     exp_max = GaussianMixture(n_components=k, n_init=10, max_iter=100).fit(original_values)
-    #     expectation_max[f'K{k}'] = exp_max.predict(original_values)
-    # # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
-    # write_to_csv(expectation_max, 'ExpectatioMaximization_result')
+    print('\033[32m*************** Affinity Propagation ***************\033[039m\n')
+    # Creación de un diccionario con las preferencias,
+    results = {
+        'preferences': [-65, -45, -30, -12, -11, -10, -8.35, -8.25, -8, -7, -6.25]
+    }
+    # Se crea diccionario de todos los resultados de los clusters para Affinity propagation
+    affinity_propagation = dict()
+    k = 1;
+    for p in results['preferences']:
+        clustering = AffinityPropagation(preference=p).fit(original_values)
+        clustering_centers_indices = clustering.cluster_centers_indices_
+        clustering_labels = clustering.labels_
+        affinity_propagation[f'K{k + 1}'] = clustering_labels
+        k += 1
+    # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
+    write_to_csv(affinity_propagation, 'AffinityPropagation_result')
+
+    print('\033[32m*************** Gaussian Mixture ***************\033[039m\n')
+    # Se crea diccionario de todos los resultados de los clusters para Gaussian Mixture
+    gaussian_mixture = dict()
+    for k in range(2, 13):
+        gaus_mix = GaussianMixture(n_components=k, n_init=10, max_iter=100).fit(original_values)
+        gaussian_mixture[f'K{k}'] = gaus_mix.predict(original_values)
+    # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
+    write_to_csv(gaussian_mixture, 'GaussianMixture_result')
+
+    print('\033[32m*************** Mean Shift Clustering ***************\033[039m\n')
+    precomputed_quantiles = {
+        2: 0.4142142142142142,
+        3: 0.4117117117117117,
+        4: 0.38143143143143143,
+        5: 0.34364364364364364,
+        6: 0.33338338338338336,
+        7: 0.32837837837837835,
+        8: 0.24254254254254254,
+        9: 0.23503503503503503,
+        10: 0.22502502503503502,
+        11: 0.20225225225225227,
+        12: 0.20225225225225227,
+        13: 0.2,
+    }
+    mean_shift = dict()
+    for k, v in precomputed_quantiles.items():
+        bandwidth = estimate_bandwidth(normalized_values, quantile=v)
+        model = MeanShift(bandwidth=bandwidth).fit(normalized_values)
+        mean_shift[f'K{k}'] = model.predict(normalized_values)
+    write_to_csv(mean_shift, 'MeanShift_result')
+
+    print('\033[32m*************** BIRCH Clustering ***************\033[039m\n')
+    birch = dict()
+    for i in range(2, 13, 1):
+        model = Birch(branching_factor=50, n_clusters=i, threshold=0.5)
+        model.fit(df_original)
+        birch[f'K{i}'] = model.predict(df_original)
+    write_to_csv(birch, 'BIRCH_result')
+
+    print('\033[32m*************** DBSCAN Clustering ***************\033[039m\n')
+    dbscan = dict()
+    for k in range(2, 13):
+        clusters = DBSCAN(eps=0.2, min_samples=k).fit_predict(original_values)
+        dbscan[f'K{k}'] = clusters
+    write_to_csv(dbscan, 'DBSCAN_result')
+
+    print('\033[32m*************** OPTICS Clustering ***************\033[039m\n')
+    optics = dict()
+    metric = 'minkowski'
+    for k in range(2, 13):
+        clustering = OPTICS(max_eps=0.4, min_samples=k).fit(original_values)
+        optics[f'K{k}'] = clustering.labels_
+    write_to_csv(optics, 'OPTICS_result')
+
+    print('\033[32m***************  Spectral Clustering ***************\033[039m\n')
+    spectral = dict()
+    for k in range(2, 13):
+        clustering = SpectralClustering(n_clusters=k, assign_labels='discretize', random_state=0).fit(original_values)
+        spectral[f'K{k}'] = clustering.labels_
+    write_to_csv(spectral, 'Spectral_result')
+    print('\033[32m***************  MiniBatchKMeans Clustering ***************\033[039m\n')
+    mini_Barch_means = dict()
+    for k in range(2, 13):
+        kmeans = MiniBatchKMeans(n_clusters=k)
+        kmeans.fit(original_values)
+        mini_Barch_means[f'K{k}'] = kmeans.labels_
+    write_to_csv(mini_Barch_means, 'MiniBatchKMeans_result')
+    print('\033[32m***************  Agglomerative Hierarchical Clustering Clustering ***************\033[039m\n')
+    agglomerative_hierarchical_clustering = dict()
+    for k in range(2, 13):
+        cluster_ea = AgglomerativeClustering(n_clusters=k, linkage='ward', affinity='euclidean')
+        predict = cluster_ea.fit_predict(normalized_values)
+        agglomerative_hierarchical_clustering[f'K{k}'] = predict
+    write_to_csv(agglomerative_hierarchical_clustering, 'AgglomerativeClustering_result')
+    print('\033[32m***************  KMeans ***************\033[039m\n')
+    kmeans = dict()
+    for k in range(2, 13):
+        cluster = KMeans(n_clusters=k).fit(original_values)
+        kmeans[f'K{k}'] = cluster.labels_
+    write_to_csv(kmeans, 'KMeans_result')
+
+    print('\033[32m*************** CURE ***************\033[039m\n')
+    cure = dict()
+    alpha = 0.1
+    numRepPoints = 5
+    for k in range(2, 13):
+        cluster = runCURE(normalized_values, numRepPoints, alpha, k)
+        cure[f'K{k}'] = cluster
+    write_to_csv(cure, 'CURE_result')
+
+    print('\033[32m*************** Expectation-Maximation ***************\033[039m\n')
+    # Se crea diccionario de todos los resultados de los clusters para Expectation-Maximation
+    expectation_max = dict()
+    for k in range(2, 13):
+        exp_max = GaussianMixture(n_components=k).fit(original_values)
+        expectation_max[f'K{k}'] = exp_max.predict(original_values)
+    # Se hace llamado a la funcion write_to_csv() para poder guardar el fichero
+    write_to_csv(expectation_max, 'ExpectatioMaximization_result')
 
     # Método de intersección para encontrar el mejor K
     # Se consulta cuantos algoritmos se desea analizar
-    numAlgorithm = input("Cuantos algoritmos desea analizar? =>  ")
+    while True:
+        numAlgorithm = input(f'\033[36m Ingrese el numero de algoritmo a analizar [1 - 12] => \033[039m\n')
+        if int(numAlgorithm) > 12 or int(numAlgorithm) < 1:
+            print(f'\033[31m Numero ingresado de algoritmos a analizar fuera del rango. Ingrese el numero entre [1 - 12].  \033[039m\n')
+            continue
+        else:
+            break
+
     # Se consulta cuantos cluster se desea analizar
-    numClusters = input("Cuantos clusters desea analizar? => ")
+    while True:
+        numClusters = input(f'\033[36m Ingrese el numero de clusters a analizar [2 - 12] => \033[039m\n')
+        if int(numClusters) > 12 or int(numClusters) < 2:
+            print(f'\033[31m Numero ingresado de algoritmos a analizar fuera del rango. Ingrese el numero entre [2 - 12].  \033[039m\n')
+            continue
+        else:
+            numClusters = int(numClusters) - 1
+            break
+
     # variable para poder analizar los porcentajes, se usa para escoger porcentages mayores al numero escogido en %
     average = 60
     # Se lee los algoritmos para poder analizarlos dependiendo de los datos ingresados anteriormente
@@ -561,14 +594,14 @@ if __name__ == '__main__':
         print(f'\033[32m ----- Matriz K{n} Average \033[039m\n')
         df_result = complete_matrix(df_original, df_transpose, n)
         print(df_result.to_string())
-        df_result.to_excel(f'Result_Matrix/Result_K{n}.xlsx')
+        # df_result.to_excel(f'Result_Matrix/Result_K{n}.xlsx')
         print(f'\n\n\033[32m -----  Matriz K{n} Average below {average}% \033[039m\n')
         # Funcion para obtener matrix mayores a result > 50%
         df_max = matrix_max_average(n, int(average))
         # funcion para obtener la frecuencia total del Kn
         df_best_k = average_per_column(df_max)
         print(df_best_k)
-        df_best_k.to_excel(f'Result_Matrix/Result_Average_K{n}.xlsx')
+        # df_best_k.to_excel(f'Result_Matrix/Result_Average_K{n}.xlsx')
         avergae_per_Kn_algorithm(df_best_k, n)
         print(f'\033[32m xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx \033[039m\n\n')
         best_k[f'K{n}'] = df_best_k.at['Total', 'Average Freq'] / n
@@ -579,6 +612,7 @@ if __name__ == '__main__':
     sum_column = Kn_average_algo.sum(axis=0)
     Kn_average_algo.loc['Total'] = sum_column.to_numpy()
     print(Kn_average_algo.to_string())
+    Kn_average_algo.to_excel(f'Matrix_Result.xlsx')
 
     # Se analiza el maximo valor de los resultados
     max_k_value = max(best_k.values())
