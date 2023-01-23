@@ -7,7 +7,10 @@ El algoritmo presente muestra el analisis paso por paso para poder entender mejo
 Para esto se debe de tomar en cuenta ciertos aspectos antes de correr el programa.
 
 1. Primero, si quiere remplazar el dataset analizar se debe de cambiar el path asignado en la linea 405, en la variable FILE_NAME_PATH. En esta variable ingresan la nueva direccion del dataset analizar.
-2. Segundo, deben de considerar que si el dataset analizar tiene una columna donde se encuentra las clases. deben quitarla. Esto lo pueden hacer ustedes removiendo toda la columna o caso contrario usen la siguiente linea de código df_original.drop(<nombre de la columna a eliminar>, inplace=True, axis=1)
+2. Segundo, deben de considerar que si el dataset analizar tiene una columna donde se encuentra las clases. deben quitarla. Esto lo pueden hacer ustedes removiendo toda la columna o caso contrario usen la siguiente linea de código 
+```ruby
+df_original.drop(<nombre de la columna a eliminar>, inplace=True, axis=1)
+```
 3. Tercero, se debe descomentar el código desde la linea 419 hasta la 532. Con la finalidad de realizar la clusterizacion del dataset con los 12 algoritmos implementados. 
 4. Cuarto, una vez realizada la clusterización el programa pide el usuario que ingrese el numero de algoritmos analizar con el numero de clusters (tabla 1 y 2). 
 
