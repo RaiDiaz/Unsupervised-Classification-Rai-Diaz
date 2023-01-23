@@ -6,13 +6,10 @@ El algoritmo presente muestra el analisis paso por paso para poder entender mejo
 
 Para esto se debe de tomar en cuenta ciertos aspectos antes de correr el programa.
 
- - Se debe crear dos carpetas Result_csv y Result_xlx
- - Si se quiere guardar la matriz que bota cada cluster se debe crear la carpeta Result_matrix y descomentar las lineas de codigo respectivas.
-
-Por otro lado, se debe seguir los siguientes pasos:
-
-1. Primero, si quiere remplazar el dataset analizar se debe de cambair el path asignado en la linea 405, en la variable FILE_NAME_PATH. En esta variable ingresan la nueva direccion del dataset analizar.
-2. Segundo, se debe descomentar el código desde la linea 419 hasta la 532. Con la finalidad de realizar la clusterizacion del dataset con los 12 algoritmos implementados. 
+1. Primero, si quiere remplazar el dataset analizar se debe de cambiar el path asignado en la linea 405, en la variable FILE_NAME_PATH. En esta variable ingresan la nueva direccion del dataset analizar.
+2. Segundo, deben de considerar que si el dataset analizar tiene una columna donde se encuentra las clases. deben quitarla. Esto lo pueden hacer ustedes removiendo toda la columna o caso contrario usen la siguiente linea de código df_original.drop(<nombre de la columna a eliminar>, inplace=True, axis=1)
+3. Tercero, se debe descomentar el código desde la linea 419 hasta la 532. Con la finalidad de realizar la clusterizacion del dataset con los 12 algoritmos implementados. 
+4. Cuarto, una vez realizada la clusterización el programa pide el usuario que ingrese el numero de algoritmos analizar con el numero de clusters (tabla 1 y 2). 
 
 NOTA: El paso 1 y 2 pueden ser opcionales, ya que si se realiza el analisis con el mismo dataset no se debe cambiar nada. Si se desea tener en carpetas estos archivos se puede mantener como el ejemplo. Pero, si se realiza un cambio o si no se crea alguna de las carpetas descritas anteriormente, se debe cambiar la direccion de donde se guarda los archivos.
 
