@@ -16,7 +16,7 @@ df_original.drop(<nombre de la columna a eliminar>, inplace=True, axis=1)
 
 NOTA: El paso 1 y 2 pueden ser opcionales, ya que si se realiza el analisis con el mismo dataset no se debe cambiar nada. Si se desea tener en carpetas estos archivos se puede mantener como el ejemplo. Pero, si se realiza un cambio o si no se crea alguna de las carpetas descritas anteriormente, se debe cambiar la direccion de donde se guarda los archivos.
 
-3. Tercero, el programa pide que se ingrese el numero de algoritmos analizar de lo cual toma un rango de 1-12. También, pide el numero de cluster para analizar que toma un rango de 1-11. 
+3. Tercero, el programa pide que se ingrese el numero de algoritmos analizar de lo cual toma un rango de 1-12. También, pide el numero de cluster para analizar que toma un rango de 2-12. 
 
 NOTA:
 Algoritmos:
