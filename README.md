@@ -38,17 +38,17 @@ Algoritmos:
 Cluster:
 | Input  | Output |
 | -------| ------------- |
-|   1    | k=2 |
-|   2    | k=3 |
-|   3    | k=4 |
-|   4    | k=5 |
-|   5    | k=6 |
-|   6    | k=7 |
-|   7    | k=8 |
-|   8    | k=9 |
-|   9    | k=10 |
-|   10   | k=11 |
-|   11   | k=12 |
+|   2    | k=2 |
+|   3    | k=3 |
+|   4    | k=4 |
+|   5    | k=5 |
+|   6    | k=6 |
+|   7    | k=7 |
+|   8    | k=8 |
+|   9    | k=9 |
+|   10    | k=10 |
+|   11   | k=11 |
+|   12   | k=12 |
 
 
 Por otro lado, al momento de descargar el código. Se debe configurar e instalar las librerias. Para esto se creo un archivo requirements.txt, en este archivo genera el interpreter para poder correr el programa sin ningun problema.
